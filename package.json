@@ -1,21 +1,27 @@
 {
-  "name": "playwright-automation-framework",
-  "version": "1.0.0",
-  "description": "Production-grade Playwright TypeScript Automation Framework with Page Object Model",
-  "main": "index.js",
+  "name": "sockshop-automation",
+  "version": "2.0.0",
+  "description": "Enterprise-grade Test Automation Framework with Workspaces",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "packages/app",
+    "packages/mobile",
+    "packages/performance",
+    "packages/security"
+  ],
   "scripts": {
-    "test": "npx playwright test",
-    "test:headed": "npx playwright test --headed",
-    "test:debug": "npx playwright test --debug",
-    "test:ui": "npx playwright test --ui",
-    "test:chrome": "npx playwright test --project=chromium",
-    "test:firefox": "npx playwright test --project=firefox",
-    "test:webkit": "npx playwright test --project=webkit",
-    "test:report": "npx playwright show-report",
-    "test:codegen": "npx playwright codegen",
-    "test:trace": "npx playwright show-trace",
-    "lint": "tsc --noEmit",
-    "clean": "rm -rf dist test-results playwright-report"
+    "test:app": "npm run test --workspace=@sockshop/app",
+    "test:ui": "npm run test:ui --workspace=@sockshop/app",
+    "test:api": "npm run test:api --workspace=@sockshop/app",
+    "test:perf": "npm run test:k6:petstore:load --workspace=@sockshop/performance",
+    "test:security": "ZAP_PROXY=true npm run test --workspace=@sockshop/app",
+    "test:all": "npm run test --workspaces --if-present",
+    "dashboard": "bash scripts/sync-reports.sh && open reports/dashboard.html",
+    "dashboard:update": "node scripts/update-dashboard.js",
+    "reports:app": "npm run report --workspace=@sockshop/app",
+    "lint": "npm run lint --workspaces --if-present",
+    "clean": "rm -rf node_modules packages/*/node_modules packages/*/dist"
   },
   "keywords": [
     "playwright",
@@ -23,16 +29,11 @@
     "automation",
     "testing",
     "e2e",
-    "page-object-model",
-    "pom"
+    "workspaces",
+    "monorepo"
   ],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@playwright/test": "^1.57.0",
-    "@types/node": "^25.0.9",
-    "typescript": "^5.9.3"
-  },
   "engines": {
     "node": ">=18.0.0"
   }

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>k6 Performance Test Report - Petstore API</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; margin-bottom: 30px; border-radius: 10px; }
+    header h1 { font-size: 2.5em; margin-bottom: 10px; }
+    header .subtitle { opacity: 0.9; font-size: 1.1em; }
+    .meta-info { display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap; }
+    .meta-item { background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 20px; }
+    .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; }
+    .card.success { border-top: 4px solid #10b981; }
+    .card.warning { border-top: 4px solid #f59e0b; }
+    .card.error { border-top: 4px solid #ef4444; }
+    .card.info { border-top: 4px solid #3b82f6; }
+    .card h3 { color: #666; font-size: 0.9em; text-transform: uppercase; margin-bottom: 10px; }
+    .card .value { font-size: 2.5em; font-weight: bold; color: #333; }
+    .card .unit { font-size: 0.9em; color: #888; }
+    .section { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+    .section h2 { color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8fafc; font-weight: 600; color: #555; }
+    tr:hover { background: #f8fafc; }
+    .status { padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; }
+    .status.pass { background: #d1fae5; color: #065f46; }
+    .status.fail { background: #fee2e2; color: #991b1b; }
+    .metric-bar { display: flex; align-items: center; gap: 10px; }
+    .bar-container { flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 4px; }
+    .response-times { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+    .time-stat { text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px; }
+    .time-stat .label { font-size: 0.85em; color: #666; margin-bottom: 5px; }
+    .time-stat .value { font-size: 1.5em; font-weight: bold; color: #333; }
+    footer { text-align: center; padding: 20px; color: #888; font-size: 0.9em; }
+    .endpoint-section { margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; }
+    .endpoint-section h4 { color: #555; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Petstore API Performance Report</h1>
+      <p class="subtitle">k6 Load Test Results</p>
+      <div class="meta-info">
+        <div class="meta-item">Test Type: <strong>SMOKE</strong></div>
+        <div class="meta-item">Duration: <strong>30.25s</strong></div>
+        <div class="meta-item">Base URL: <strong>https://petstore.swagger.io/v2</strong></div>
+        <div class="meta-item">Generated: <strong>01/23/2026, 15:16:41</strong></div>
+      </div>
+    </header>
+
+    <div class="summary-cards">
+      <div class="card info">
+        <h3>Total Requests</h3>
+        <div class="value">22</div>
+      </div>
+      <div class="card success">
+        <h3>Error Rate</h3>
+        <div class="value">0.00<span class="unit">%</span></div>
+      </div>
+      <div class="card success">
+        <h3>Pets Created</h3>
+        <div class="value">11</div>
+      </div>
+      <div class="card success">
+        <h3>Pets Retrieved</h3>
+        <div class="value">11</div>
+      </div>
+      <div class="card success">
+        <h3>Thresholds</h3>
+        <div class="value">5/5</div>
+      </div>
+      <div class="card success">
+        <h3>Checks Passed</h3>
+        <div class="value">55<span class="unit">/55</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Response Times Overview</h2>
+      <div class="response-times">
+        <div class="time-stat">
+          <div class="label">Average</div>
+          <div class="value">320ms</div>
+        </div>
+        <div class="time-stat">
+          <div class="label">Minimum</div>
+          <div class="value">310ms</div>
+        </div>
+        <div class="time-stat">
+          <div class="label">Median</div>
+          <div class="value">312ms</div>
+        </div>
+        <div class="time-stat">
+          <div class="label">Maximum</div>
+          <div class="value">411ms</div>
+        </div>
+        <div class="time-stat">
+          <div class="label">p(90)</div>
+          <div class="value">337ms</div>
+        </div>
+        <div class="time-stat">
+          <div class="label">p(95)</div>
+          <div class="value">345ms</div>
+        </div>
+      </div>
+
+      <div class="endpoint-section">
+        <h4>POST /pet - Create Pet</h4>
+        <div class="response-times">
+          <div class="time-stat"><div class="label">Avg</div><div class="value">432ms</div></div>
+          <div class="time-stat"><div class="label">Min</div><div class="value">310ms</div></div>
+          <div class="time-stat"><div class="label">Max</div><div class="value">1599ms</div></div>
+          <div class="time-stat"><div class="label">p(95)</div><div class="value">969ms</div></div>
+        </div>
+      </div>
+
+      <div class="endpoint-section">
+        <h4>GET /pet/{id} - Retrieve Pet</h4>
+        <div class="response-times">
+          <div class="time-stat"><div class="label">Avg</div><div class="value">316ms</div></div>
+          <div class="time-stat"><div class="label">Min</div><div class="value">310ms</div></div>
+          <div class="time-stat"><div class="label">Max</div><div class="value">346ms</div></div>
+          <div class="time-stat"><div class="label">p(95)</div><div class="value">333ms</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Thresholds</h2>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Threshold</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>get_pet_duration</td>
+              <td>p(95)<1000</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>create_pet_duration</td>
+              <td>p(95)<1500</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>errors</td>
+              <td>rate<0.05</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>http_req_duration</td>
+              <td>p(95)<2000</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>http_req_failed</td>
+              <td>rate<0.05</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Checks</h2>
+      <table>
+        <thead>
+          <tr><th>Group</th><th>Check</th><th>Passes</th><th>Fails</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>POST /pet - Create Pet</td>
+              <td>POST /pet status is 200</td>
+              <td>11</td>
+              <td>0</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>POST /pet - Create Pet</td>
+              <td>POST /pet response has id</td>
+              <td>11</td>
+              <td>0</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>POST /pet - Create Pet</td>
+              <td>POST /pet response has correct name</td>
+              <td>11</td>
+              <td>0</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>GET /pet/{id} - Retrieve Pet</td>
+              <td>GET /pet/{id} status is 200</td>
+              <td>11</td>
+              <td>0</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>GET /pet/{id} - Retrieve Pet</td>
+              <td>GET /pet/{id} returns correct pet</td>
+              <td>11</td>
+              <td>0</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>Generated by k6 Performance Testing Framework | Petstore API Load Tests</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "@sockshop/mobile",
+  "version": "1.0.0",
+  "description": "Mobile automation tests (Android/iOS)",
+  "scripts": {
+    "test:android": "echo 'Configure Appium for Android tests'",
+    "test:ios": "echo 'Configure Appium for iOS tests'",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@sockshop/shared": "1.0.0"
+  }
+}

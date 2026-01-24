@@ -1,0 +1,25 @@
+{
+  "name": "@sockshop/security",
+  "version": "1.0.0",
+  "description": "OWASP ZAP Security Testing with Playwright",
+  "scripts": {
+    "test": "playwright test",
+    "test:passive": "PW_WORKERS=4 ZAP_ACTIVE_SCAN=false playwright test",
+    "test:active": "PW_WORKERS=1 ZAP_ACTIVE_SCAN=true playwright test",
+    "test:ci": "PW_WORKERS=1 ZAP_EXTERNAL=true playwright test",
+    "zap:start": "ts-node src/scripts/start-zap.ts",
+    "zap:stop": "ts-node src/scripts/stop-zap.ts",
+    "zap:status": "ts-node src/scripts/zap-status.ts",
+    "report": "playwright show-report reports/playwright",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@sockshop/shared": "1.0.0"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@sockshop/app",
+  "version": "1.0.0",
+  "description": "Multi-modular test automation (UI + API)",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui-mode": "playwright test --ui",
+    "test:ui": "playwright test **/tests/ui/",
+    "test:api": "playwright test **/tests/api/",
+    "test:home": "playwright test src/modules/home/tests/",
+    "test:search": "playwright test src/modules/search/tests/",
+    "test:accounts": "playwright test src/modules/accounts/tests/",
+    "test:petstore": "playwright test src/modules/petstore/tests/",
+    "test:journeys": "playwright test src/journeys/",
+    "report": "playwright show-report",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@sockshop/shared": "1.0.0"
+  }
+}

@@ -1,0 +1,115 @@
+# GitHub Actions Workflow for Security Testing
+# =============================================
+# Example CI configuration for OWASP ZAP security scans
+
+name: Security Scan
+
+on:
+  schedule:
+    # Run weekly security scans
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Scan type (passive or active)'
+        required: true
+        default: 'passive'
+        type: choice
+        options:
+          - passive
+          - active
+      target_url:
+        description: 'Target URL to scan'
+        required: true
+        default: 'https://www.example.com'
+
+env:
+  TARGET_URL: ${{ github.event.inputs.target_url || 'https://www.example.com' }}
+  ZAP_API_KEY: ${{ secrets.ZAP_API_KEY || 'ci-security-key' }}
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    services:
+      # ZAP running as Docker service
+      zap:
+        image: ghcr.io/zaproxy/zaproxy:stable
+        ports:
+          - 8080:8080
+        options: >-
+          --health-cmd="curl -s http://localhost:8080 || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+        env:
+          ZAP_PORT: 8080
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: Wait for ZAP to be ready
+        run: |
+          echo "Waiting for ZAP to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8080 > /dev/null; then
+              echo "ZAP is ready!"
+              break
+            fi
+            echo "Attempt $i: ZAP not ready yet..."
+            sleep 2
+          done
+
+      - name: Run Passive Security Scan
+        if: ${{ github.event.inputs.scan_type != 'active' }}
+        run: |
+          cd packages/security
+          npm run test:passive
+        env:
+          ZAP_EXTERNAL: 'true'
+          ZAP_PROXY_HOST: 'localhost'
+          ZAP_PROXY_PORT: '8080'
+          PW_WORKERS: '4'
+          ZAP_ACTIVE_SCAN: 'false'
+
+      - name: Run Active Security Scan
+        if: ${{ github.event.inputs.scan_type == 'active' }}
+        run: |
+          cd packages/security
+          npm run test:active
+        env:
+          ZAP_EXTERNAL: 'true'
+          ZAP_PROXY_HOST: 'localhost'
+          ZAP_PROXY_PORT: '8080'
+          PW_WORKERS: '1'
+          ZAP_ACTIVE_SCAN: 'true'
+
+      - name: Upload Security Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            packages/security/reports/
+          retention-days: 30
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: packages/security/reports/playwright/
+          retention-days: 7
