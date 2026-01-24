@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    networks:
+      - automation-network
+
+  jenkins-agent:
+    image: mcr.microsoft.com/playwright:v1.40.0-jammy
+    container_name: jenkins-agent
+    privileged: true
+    user: root
+    volumes:
+      - ./:/workspace
+      - agent_home:/home/pwuser
+    working_dir: /workspace
+    environment:
+      - CI=true
+      - NODE_ENV=test
+    networks:
+      - automation-network
+    depends_on:
+      - jenkins
+    command: tail -f /dev/null
+
+  zap:
+    image: zaproxy/zap-stable
+    container_name: zap
+    ports:
+      - "8080:8080"
+    volumes:
+      - zap_data:/zap/wrk
+    command: zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+    networks:
+      - automation-network
+
+volumes:
+  jenkins_home:
+  agent_home:
+  zap_data:
+
+networks:
+  automation-network:
+    driver: bridge
