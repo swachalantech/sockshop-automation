@@ -44,14 +44,11 @@ pipeline {
 
         stage('Setup') {
             steps {
-                script {
-                    // Install Node.js dependencies
-                    sh '''
-                        echo "Node version: $(node -v)"
-                        echo "NPM version: $(npm -v)"
-                        npm install
-                    '''
-                }
+                sh '''
+                    echo "Node version: $(node -v)"
+                    echo "NPM version: $(npm -v)"
+                    npm install
+                '''
             }
         }
 
@@ -61,82 +58,57 @@ pipeline {
             }
         }
 
-        stage('Start ZAP') {
+        stage('UI Tests') {
             when {
-                expression { params.ENABLE_ZAP == true }
+                expression {
+                    return params.TEST_SUITE == 'all' || params.TEST_SUITE == 'ui'
+                }
             }
             steps {
-                script {
-                    // Start ZAP in daemon mode (assumes ZAP is available)
-                    sh '''
-                        echo "Starting ZAP daemon..."
-                        # ZAP should be running in Docker or as a service
-                        # Check if ZAP is accessible
-                        curl -s http://${ZAP_HOST}:${ZAP_PORT}/JSON/core/view/version/ || echo "ZAP not running - please start ZAP container"
-                    '''
+                sh "TEST_ENV=${params.ENVIRONMENT} npm run test:ui --workspace=@sockshop/app || true"
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'packages/app/playwright-report',
+                        reportFiles: 'index.html',
+                        reportName: 'UI Test Report'
+                    ])
                 }
             }
         }
 
-        stage('Run Tests') {
-            parallel {
-                stage('UI Tests') {
-                    when {
-                        expression { params.TEST_SUITE == 'all' || params.TEST_SUITE == 'ui' }
-                    }
-                    steps {
-                        script {
-                            def zapProxy = params.ENABLE_ZAP ? 'ZAP_PROXY=true' : ''
-                            sh """
-                                ${zapProxy} TEST_ENV=${params.ENVIRONMENT} npm run test:ui --workspace=@sockshop/app || true
-                            """
-                        }
-                    }
-                    post {
-                        always {
-                            publishHTML(target: [
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: 'packages/app/playwright-report',
-                                reportFiles: 'index.html',
-                                reportName: 'UI Test Report'
-                            ])
-                        }
-                    }
+        stage('API Tests') {
+            when {
+                expression {
+                    return params.TEST_SUITE == 'all' || params.TEST_SUITE == 'api'
                 }
-
-                stage('API Tests') {
-                    when {
-                        expression { params.TEST_SUITE == 'all' || params.TEST_SUITE == 'api' }
-                    }
-                    steps {
-                        script {
-                            def zapProxy = params.ENABLE_ZAP ? 'ZAP_PROXY=true' : ''
-                            sh """
-                                ${zapProxy} TEST_ENV=${params.ENVIRONMENT} npm run test:api --workspace=@sockshop/app || true
-                            """
-                        }
-                    }
-                    post {
-                        always {
-                            publishHTML(target: [
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: 'packages/app/playwright-report',
-                                reportFiles: 'index.html',
-                                reportName: 'API Test Report'
-                            ])
-                        }
-                    }
+            }
+            steps {
+                sh "TEST_ENV=${params.ENVIRONMENT} npm run test:api --workspace=@sockshop/app || true"
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'packages/app/playwright-report',
+                        reportFiles: 'index.html',
+                        reportName: 'API Test Report'
+                    ])
                 }
             }
         }
 
         stage('Performance Tests') {
             when {
-                expression { params.TEST_SUITE == 'all' || params.TEST_SUITE == 'performance' }
+                expression {
+                    return params.TEST_SUITE == 'all' || params.TEST_SUITE == 'performance'
+                }
             }
             steps {
                 sh '''
@@ -158,41 +130,9 @@ pipeline {
             }
         }
 
-        stage('Security Scan Results') {
-            when {
-                expression { params.ENABLE_ZAP == true }
-            }
-            steps {
-                script {
-                    sh '''
-                        echo "Fetching ZAP scan results..."
-                        curl -s "http://${ZAP_HOST}:${ZAP_PORT}/JSON/alert/view/alertsSummary/" > reports/security/zap-summary.json || true
-                        curl -s "http://${ZAP_HOST}:${ZAP_PORT}/OTHER/core/other/htmlreport/" > reports/security/zap-scan-report.html || true
-
-                        echo "=== ZAP Security Scan Summary ==="
-                        cat reports/security/zap-summary.json || echo "No summary available"
-                    '''
-                }
-            }
-            post {
-                always {
-                    publishHTML(target: [
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'reports/security',
-                        reportFiles: 'zap-scan-report.html',
-                        reportName: 'Security Report'
-                    ])
-                }
-            }
-        }
-
         stage('Sync Reports') {
             steps {
-                sh '''
-                    bash scripts/sync-reports.sh || true
-                '''
+                sh 'bash scripts/sync-reports.sh || true'
             }
             post {
                 always {
