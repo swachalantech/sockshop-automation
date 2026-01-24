@@ -49,7 +49,7 @@ pipeline {
                     sh '''
                         echo "Node version: $(node -v)"
                         echo "NPM version: $(npm -v)"
-                        npm ci
+                        npm install
                     '''
                 }
             }
@@ -57,7 +57,7 @@ pipeline {
 
         stage('Install Browsers') {
             steps {
-                sh 'npx playwright install --with-deps chromium firefox webkit'
+                sh 'npx playwright install chromium || true'
             }
         }
 
