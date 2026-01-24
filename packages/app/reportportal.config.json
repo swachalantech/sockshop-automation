@@ -1,0 +1,21 @@
+{
+  "apiKey": "sockshop_api_key",
+  "endpoint": "http://localhost:9080/api/v1",
+  "project": "sockshop_automation",
+  "launch": "Sockshop Test Execution",
+  "description": "Automated test execution for Sockshop framework",
+  "attributes": [
+    {
+      "key": "framework",
+      "value": "playwright"
+    },
+    {
+      "key": "environment",
+      "value": "local"
+    }
+  ],
+  "debug": false,
+  "restClientConfig": {
+    "timeout": 60000
+  }
+}
