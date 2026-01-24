@@ -4,6 +4,20 @@
 
 ---
 
+## Test Results Dashboard
+
+![Dashboard Screenshot](docs/dashboard-screenshot.png)
+
+**Latest Test Run:**
+
+| Test Type | Passed | Failed | Total |
+|-----------|--------|--------|-------|
+| UI Tests | 6 | 3 | 9 |
+| API Tests | 9 | 0 | 9 |
+| Performance | ✓ | - | Smoke Test |
+
+---
+
 ## Purpose
 
 This framework solves the challenge of **scaling test automation across multiple teams** by providing:

@@ -451,5 +451,46 @@
     document.getElementById('sec-medium').textContent = '58';
     document.getElementById('sec-low').textContent = '63';
   </script>
+
+  <script>
+    // Auto-loaded stats from last test run
+    const dashboardStats = {
+  "ui": {
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "api": {
+    "passed": 0,
+    "failed": 0
+  },
+  "performance": {
+    "rps": "0.7",
+    "avg": "320",
+    "p95": "345"
+  },
+  "security": {
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "lastUpdated": "2026-01-24T01:40:54.983Z"
+};
+    localStorage.setItem('dashboardStats', JSON.stringify(dashboardStats));
+
+    // Update UI
+    document.getElementById('lastUpdated').textContent = new Date('2026-01-24T01:40:54.983Z').toLocaleString();
+    document.getElementById('ui-passed').textContent = '0';
+    document.getElementById('ui-failed').textContent = '0';
+    document.getElementById('ui-skipped').textContent = '0';
+    document.getElementById('api-passed').textContent = '0';
+    document.getElementById('api-failed').textContent = '0';
+    document.getElementById('perf-rps').textContent = '0.7';
+    document.getElementById('perf-avg').textContent = '320';
+    document.getElementById('perf-p95').textContent = '345';
+    document.getElementById('sec-high').textContent = '0';
+    document.getElementById('sec-medium').textContent = '0';
+    document.getElementById('sec-low').textContent = '0';
+  </script>
 </body>
 </html>

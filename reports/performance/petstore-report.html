@@ -50,9 +50,9 @@
       <p class="subtitle">k6 Load Test Results</p>
       <div class="meta-info">
         <div class="meta-item">Test Type: <strong>SMOKE</strong></div>
-        <div class="meta-item">Duration: <strong>30.25s</strong></div>
+        <div class="meta-item">Duration: <strong>30.51s</strong></div>
         <div class="meta-item">Base URL: <strong>https://petstore.swagger.io/v2</strong></div>
-        <div class="meta-item">Generated: <strong>01/23/2026, 15:16:41</strong></div>
+        <div class="meta-item">Generated: <strong>01/24/2026, 10:37:53</strong></div>
       </div>
     </header>
 
@@ -88,47 +88,47 @@
       <div class="response-times">
         <div class="time-stat">
           <div class="label">Average</div>
-          <div class="value">320ms</div>
+          <div class="value">341ms</div>
         </div>
         <div class="time-stat">
           <div class="label">Minimum</div>
-          <div class="value">310ms</div>
+          <div class="value">323ms</div>
         </div>
         <div class="time-stat">
           <div class="label">Median</div>
-          <div class="value">312ms</div>
+          <div class="value">324ms</div>
         </div>
         <div class="time-stat">
           <div class="label">Maximum</div>
-          <div class="value">411ms</div>
+          <div class="value">432ms</div>
         </div>
         <div class="time-stat">
           <div class="label">p(90)</div>
-          <div class="value">337ms</div>
+          <div class="value">392ms</div>
         </div>
         <div class="time-stat">
           <div class="label">p(95)</div>
-          <div class="value">345ms</div>
+          <div class="value">426ms</div>
         </div>
       </div>
 
       <div class="endpoint-section">
         <h4>POST /pet - Create Pet</h4>
         <div class="response-times">
-          <div class="time-stat"><div class="label">Avg</div><div class="value">432ms</div></div>
-          <div class="time-stat"><div class="label">Min</div><div class="value">310ms</div></div>
-          <div class="time-stat"><div class="label">Max</div><div class="value">1599ms</div></div>
-          <div class="time-stat"><div class="label">p(95)</div><div class="value">969ms</div></div>
+          <div class="time-stat"><div class="label">Avg</div><div class="value">436ms</div></div>
+          <div class="time-stat"><div class="label">Min</div><div class="value">323ms</div></div>
+          <div class="time-stat"><div class="label">Max</div><div class="value">1367ms</div></div>
+          <div class="time-stat"><div class="label">p(95)</div><div class="value">899ms</div></div>
         </div>
       </div>
 
       <div class="endpoint-section">
         <h4>GET /pet/{id} - Retrieve Pet</h4>
         <div class="response-times">
-          <div class="time-stat"><div class="label">Avg</div><div class="value">316ms</div></div>
-          <div class="time-stat"><div class="label">Min</div><div class="value">310ms</div></div>
-          <div class="time-stat"><div class="label">Max</div><div class="value">346ms</div></div>
-          <div class="time-stat"><div class="label">p(95)</div><div class="value">333ms</div></div>
+          <div class="time-stat"><div class="label">Avg</div><div class="value">335ms</div></div>
+          <div class="time-stat"><div class="label">Min</div><div class="value">322ms</div></div>
+          <div class="time-stat"><div class="label">Max</div><div class="value">428ms</div></div>
+          <div class="time-stat"><div class="label">p(95)</div><div class="value">380ms</div></div>
         </div>
       </div>
     </div>
@@ -148,12 +148,6 @@
             </tr>
           
             <tr>
-              <td>create_pet_duration</td>
-              <td>p(95)<1500</td>
-              <td><span class="status pass">PASSED</span></td>
-            </tr>
-          
-            <tr>
               <td>errors</td>
               <td>rate<0.05</td>
               <td><span class="status pass">PASSED</span></td>
@@ -162,6 +156,12 @@
             <tr>
               <td>http_req_duration</td>
               <td>p(95)<2000</td>
+              <td><span class="status pass">PASSED</span></td>
+            </tr>
+          
+            <tr>
+              <td>create_pet_duration</td>
+              <td>p(95)<1500</td>
               <td><span class="status pass">PASSED</span></td>
             </tr>
           
