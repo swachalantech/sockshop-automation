@@ -456,41 +456,41 @@
     // Auto-loaded stats from last test run
     const dashboardStats = {
   "ui": {
-    "passed": 0,
-    "failed": 0,
+    "passed": 6,
+    "failed": 3,
     "skipped": 0
   },
   "api": {
-    "passed": 0,
+    "passed": 9,
     "failed": 0
   },
   "performance": {
-    "rps": "0.7",
-    "avg": "320",
-    "p95": "345"
+    "rps": "0.4",
+    "avg": "431",
+    "p95": "485"
   },
   "security": {
-    "high": 0,
-    "medium": 0,
-    "low": 0
+    "high": 1,
+    "medium": 207,
+    "low": 459
   },
-  "lastUpdated": "2026-01-24T01:40:54.983Z"
+  "lastUpdated": "2026-01-24T10:45:00.000Z"
 };
     localStorage.setItem('dashboardStats', JSON.stringify(dashboardStats));
 
     // Update UI
-    document.getElementById('lastUpdated').textContent = new Date('2026-01-24T01:40:54.983Z').toLocaleString();
-    document.getElementById('ui-passed').textContent = '0';
-    document.getElementById('ui-failed').textContent = '0';
+    document.getElementById('lastUpdated').textContent = new Date('2026-01-24T10:45:00.000Z').toLocaleString();
+    document.getElementById('ui-passed').textContent = '6';
+    document.getElementById('ui-failed').textContent = '3';
     document.getElementById('ui-skipped').textContent = '0';
-    document.getElementById('api-passed').textContent = '0';
+    document.getElementById('api-passed').textContent = '9';
     document.getElementById('api-failed').textContent = '0';
-    document.getElementById('perf-rps').textContent = '0.7';
-    document.getElementById('perf-avg').textContent = '320';
-    document.getElementById('perf-p95').textContent = '345';
-    document.getElementById('sec-high').textContent = '0';
-    document.getElementById('sec-medium').textContent = '0';
-    document.getElementById('sec-low').textContent = '0';
+    document.getElementById('perf-rps').textContent = '0.4';
+    document.getElementById('perf-avg').textContent = '431';
+    document.getElementById('perf-p95').textContent = '485';
+    document.getElementById('sec-high').textContent = '1';
+    document.getElementById('sec-medium').textContent = '207';
+    document.getElementById('sec-low').textContent = '459';
   </script>
 </body>
 </html>

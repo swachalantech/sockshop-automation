@@ -8,13 +8,14 @@
 
 ![Dashboard Screenshot](docs/dashboard-screenshot.png)
 
-**Latest Test Run:**
+**Latest Test Run (with ZAP Passive Scanning):**
 
-| Test Type | Passed | Failed | Total |
-|-----------|--------|--------|-------|
-| UI Tests | 6 | 3 | 9 |
-| API Tests | 9 | 0 | 9 |
-| Performance | ✓ | - | Smoke Test |
+| Test Type | Passed | Failed | Details |
+|-----------|--------|--------|---------|
+| UI Tests | 6 | 3 | Chromium, Firefox, WebKit |
+| API Tests | 9 | 0 | Petstore API endpoints |
+| Performance | ✓ | - | Smoke test (30s, 11 iterations) |
+| **Security** | - | - | High: 1, Medium: 207, Low: 459 |
 
 ---
 
