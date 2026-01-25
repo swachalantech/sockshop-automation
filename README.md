@@ -8,14 +8,18 @@
 
 ![Dashboard Screenshot](docs/dashboard-screenshot.png)
 
-**Latest Test Run (with ZAP Passive Scanning):**
+**Latest Test Run:**
 
 | Test Type | Passed | Failed | Details |
 |-----------|--------|--------|---------|
-| UI Tests | 6 | 3 | Chromium, Firefox, WebKit |
+| UI Tests | 7 | 2 | Chromium, Firefox, WebKit |
 | API Tests | 9 | 0 | Petstore API endpoints |
 | Performance | ✓ | - | Smoke test (30s, 11 iterations) |
-| **Security** | - | - | High: 1, Medium: 207, Low: 459 |
+| **Security** | - | - | ZAP proxy integration available |
+
+**Reporting Options:**
+- **Local Dashboard**: `npm run dashboard`
+- **ReportPortal**: `http://localhost:9080` (for historical analysis)
 
 ---
 
@@ -258,6 +262,12 @@ npm run test:security
 | `npm run test:security` | Run ZAP security tests |
 | `npm run test:all` | Run tests across all packages |
 | `npm run dashboard` | Open unified test dashboard |
+| `npm run test:ui:rp` | Run UI tests with ReportPortal reporting |
+| `npm run test:api:rp` | Run API tests with ReportPortal reporting |
+| `npm run test:all:rp` | Run all tests with ReportPortal reporting |
+| `npm run reportportal:start` | Start ReportPortal services |
+| `npm run reportportal:stop` | Stop ReportPortal services |
+| `npm run reportportal:logs` | View ReportPortal logs |
 
 ### App Package Commands
 
@@ -425,6 +435,119 @@ Reports are stored in:
 - `packages/app/reports/html/` - Playwright HTML reports
 - `packages/performance/reports/` - k6 performance reports
 - `packages/security/reports/` - ZAP security reports
+
+---
+
+## ReportPortal Integration
+
+ReportPortal provides centralized test reporting with historical analysis, dashboards, and trend visualization.
+
+### Setup
+
+```bash
+# Start ReportPortal services (requires Docker)
+npm run reportportal:start
+
+# Wait for services to initialize (~30 seconds)
+# Access at: http://localhost:9080
+# Default credentials: superadmin / erebus
+```
+
+### First-Time Configuration
+
+1. Login to ReportPortal at `http://localhost:9080`
+2. Create a new project named `sockshop_automation`
+3. Go to **Profile > API Keys**
+4. Generate an API key and set it as `RP_API_KEY` environment variable
+
+### Running Tests with ReportPortal
+
+```bash
+# Run UI tests with ReportPortal reporting
+npm run test:ui:rp
+
+# Run API tests with ReportPortal reporting
+npm run test:api:rp
+
+# Run all tests with ReportPortal reporting
+npm run test:all:rp
+
+# Or set environment variable manually
+REPORT_PORTAL=true npm run test:app
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `REPORT_PORTAL` | `false` | Enable ReportPortal reporting |
+| `RP_API_KEY` | `sockshop_api_key` | ReportPortal API key |
+| `RP_ENDPOINT` | `http://localhost:9080/api/v1` | ReportPortal API endpoint |
+| `RP_PROJECT` | `sockshop_automation` | Project name in ReportPortal |
+| `RP_LAUNCH` | `Sockshop Test Execution` | Launch name for test runs |
+
+### Managing ReportPortal
+
+```bash
+# Start services
+npm run reportportal:start
+
+# Stop services
+npm run reportportal:stop
+
+# View logs
+npm run reportportal:logs
+```
+
+### Features
+
+- **Historical Analysis** - Track test results over time
+- **Dashboards** - Visualize pass/fail trends, execution statistics
+- **Defect Triage** - Analyze and categorize failures
+- **Filters** - Create custom views for different test suites
+- **Widgets** - Overall statistics, launch trends, pass/fail charts
+
+---
+
+## Jenkins Integration
+
+The framework includes a Jenkinsfile for CI/CD integration.
+
+### Pipeline Features
+
+- Parameterized builds (test suite selection, environment)
+- Automated browser installation
+- Parallel test execution support
+- Artifact archiving for reports
+
+### Running in Jenkins
+
+1. Create a new Pipeline job
+2. Point to SCM with this repository
+3. Configure parameters:
+   - `TEST_SUITE`: all, ui, api, performance
+   - `ENVIRONMENT`: prod, qa, dev
+4. Run the build
+
+### Pipeline Stages
+
+| Stage | Description |
+|-------|-------------|
+| Checkout | Clone repository |
+| Setup | Install npm dependencies |
+| Install Browsers | Install Playwright browsers |
+| UI Tests | Run UI test suite |
+| API Tests | Run API test suite |
+| Performance Tests | Run k6 performance tests |
+| Sync Reports | Consolidate all reports |
+
+### Viewing HTML Reports in Jenkins
+
+To properly render HTML reports with CSS in Jenkins, disable Content Security Policy by running this in Jenkins Script Console:
+
+```groovy
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
+```
 
 ---
 
