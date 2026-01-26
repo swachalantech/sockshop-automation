@@ -549,6 +549,52 @@ To properly render HTML reports with CSS in Jenkins, disable Content Security Po
 System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
 ```
 
+### Slack Notifications
+
+The pipeline sends test execution summaries to Slack with:
+- Build status (pass/fail)
+- Test results summary (passed, failed, skipped)
+- Links to reports (Dashboard, Playwright, ReportPortal)
+
+**Setup Steps:**
+
+1. **Install Slack Notification Plugin**
+   - Go to Jenkins > Manage Jenkins > Plugins
+   - Search for "Slack Notification" and install
+
+2. **Create Slack App**
+   - Go to [api.slack.com/apps](https://api.slack.com/apps)
+   - Create new app > From scratch
+   - Add "Incoming Webhooks" feature
+   - Activate and add webhook to your channel
+
+3. **Configure Jenkins**
+   - Go to Jenkins > Manage Jenkins > System
+   - Find "Slack" section
+   - Add workspace and credential (Bot token or Webhook)
+   - Test connection
+
+4. **Update Jenkinsfile**
+   - Change `SLACK_CHANNEL` to your channel name
+   - Update `REPORTPORTAL_URL` if different
+
+**Sample Slack Message:**
+```
+✅ Test Execution Passed
+Job: sockshop-automation #42
+Environment: prod
+Test Suite: all
+
+Results Summary:
+Tests: 16 passed, 0 failed, 0 skipped (100% pass rate)
+Performance: 11 iterations in 30.5s
+
+Reports:
+• Dashboard Report
+• Playwright Report
+• ReportPortal
+```
+
 ---
 
 ## Project Dependencies
