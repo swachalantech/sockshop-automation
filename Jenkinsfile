@@ -59,7 +59,7 @@ pipeline {
                 }
             }
             steps {
-                sh "TEST_ENV=${params.ENVIRONMENT} npm run test:ui --workspace=@sockshop/app || true"
+                sh "TEST_ENV=${params.ENVIRONMENT} ZAP_PROXY=true REPORT_PORTAL=true npm run test:ui --workspace=@sockshop/app || true"
             }
         }
 
@@ -70,7 +70,7 @@ pipeline {
                 }
             }
             steps {
-                sh "TEST_ENV=${params.ENVIRONMENT} npm run test:api --workspace=@sockshop/app || true"
+                sh "TEST_ENV=${params.ENVIRONMENT} ZAP_PROXY=true REPORT_PORTAL=true npm run test:api --workspace=@sockshop/app || true"
             }
         }
 
