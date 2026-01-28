@@ -5,7 +5,10 @@ pipeline {
         NODE_VERSION = '18'
         CI = 'true'
         PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/browsers"
-        REPORTPORTAL_URL = 'http://localhost:9080'
+        // Use host.docker.internal to access services on host from within Docker container
+        REPORTPORTAL_URL = 'http://host.docker.internal:9080'
+        ZAP_HOST = 'host.docker.internal'
+        ZAP_PORT = '8080'
     }
 
     options {
@@ -48,7 +51,7 @@ pipeline {
 
         stage('Install Browsers') {
             steps {
-                sh 'npx playwright install chromium || true'
+                sh 'npx playwright install --with-deps || true'
             }
         }
 
@@ -59,7 +62,15 @@ pipeline {
                 }
             }
             steps {
-                sh "TEST_ENV=${params.ENVIRONMENT} ZAP_PROXY=true REPORT_PORTAL=true npm run test:ui --workspace=@sockshop/app || true"
+                sh """
+                    TEST_ENV=${params.ENVIRONMENT} \
+                    ZAP_PROXY=true \
+                    ZAP_HOST=${env.ZAP_HOST} \
+                    ZAP_PORT=${env.ZAP_PORT} \
+                    REPORT_PORTAL=true \
+                    RP_ENDPOINT=http://${env.ZAP_HOST}:9080/api/v1 \
+                    npm run test:ui --workspace=@sockshop/app || true
+                """
             }
         }
 
@@ -70,7 +81,15 @@ pipeline {
                 }
             }
             steps {
-                sh "TEST_ENV=${params.ENVIRONMENT} ZAP_PROXY=true REPORT_PORTAL=true npm run test:api --workspace=@sockshop/app || true"
+                sh """
+                    TEST_ENV=${params.ENVIRONMENT} \
+                    ZAP_PROXY=true \
+                    ZAP_HOST=${env.ZAP_HOST} \
+                    ZAP_PORT=${env.ZAP_PORT} \
+                    REPORT_PORTAL=true \
+                    RP_ENDPOINT=http://${env.ZAP_HOST}:9080/api/v1 \
+                    npm run test:api --workspace=@sockshop/app || true
+                """
             }
         }
 
