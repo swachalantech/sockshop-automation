@@ -703,6 +703,107 @@ jobs:
 
 ---
 
+## Integrations
+
+### Slack Integration
+
+The framework integrates with Slack to provide real-time test execution notifications directly to your team channels.
+
+**Features:**
+- Automated notifications on build completion (pass/fail/unstable)
+- Test results summary with pass/fail counts and pass rate
+- Direct links to Jenkins reports, Playwright reports, and ReportPortal
+- Performance test metrics included in notifications
+
+**Setup:**
+1. Create a Slack App at [api.slack.com/apps](https://api.slack.com/apps)
+2. Enable **Incoming Webhooks** feature
+3. Create a webhook URL for your target channel
+4. Store the webhook URL as Jenkins credential with ID `slack-webhook`
+
+**Sample Notification:**
+```
+✅ Test Execution PASSED
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Job: sockshop-automation #13
+Environment: prod
+Test Suite: all
+
+Results Summary:
+Tests: 18 passed, 0 failed (100% pass rate)
+Performance: 11 iterations in 30.3s
+
+Reports:
+• Dashboard Report
+• Playwright Report
+• ReportPortal
+```
+
+---
+
+## Roadmap / TODO
+
+### Planned Enhancements
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **AWS Lambda Auto-Scaling** | Dynamically spin up VMs for parallel test execution and terminate after completion using AWS Lambda triggers | Planned |
+| **Grafana Integration** | Real-time dashboards for test metrics, performance trends, and historical analysis | Planned |
+| **Dynatrace Integration** | APM integration for correlating test results with application performance metrics | Planned |
+
+### AWS Lambda Auto-Scaling Execution
+
+**Goal:** Automatically scale test execution infrastructure based on demand.
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
+│   Jenkins   │────▶│  AWS Lambda  │────▶│  EC2 Instances  │
+│   Trigger   │     │  Orchestrator │     │  (Playwright)   │
+└─────────────┘     └──────────────┘     └─────────────────┘
+                           │                      │
+                           │                      ▼
+                           │              ┌─────────────────┐
+                           │              │  Run Tests in   │
+                           │              │    Parallel     │
+                           │              └─────────────────┘
+                           │                      │
+                           ▼                      ▼
+                    ┌──────────────┐     ┌─────────────────┐
+                    │  Terminate   │◀────│  Collect Results │
+                    │     VMs      │     │   & Reports     │
+                    └──────────────┘     └─────────────────┘
+```
+
+**Planned Features:**
+- Trigger Lambda on Jenkins pipeline start
+- Dynamically provision EC2 instances based on test count
+- Distribute tests across instances for parallel execution
+- Auto-terminate instances after test completion
+- Cost optimization through spot instances
+
+### Grafana Integration
+
+**Goal:** Visualize test execution metrics and trends.
+
+**Planned Dashboards:**
+- Test execution trends (pass/fail over time)
+- Performance test metrics (response times, throughput)
+- Test duration analytics
+- Failure pattern analysis
+- Environment comparison views
+
+### Dynatrace Integration
+
+**Goal:** Correlate test execution with application performance.
+
+**Planned Features:**
+- Link test runs to Dynatrace sessions
+- Capture APM data during test execution
+- Identify performance bottlenecks from test failures
+- Automated problem detection correlation
+
+---
+
 ## License
 
 ISC
