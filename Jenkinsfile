@@ -5,8 +5,6 @@ pipeline {
         NODE_VERSION = '18'
         CI = 'true'
         PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/browsers"
-        // Slack configuration - set in Jenkins credentials
-        SLACK_CHANNEL = '#test-automation'
         REPORTPORTAL_URL = 'http://localhost:9080'
     }
 
@@ -103,7 +101,6 @@ pipeline {
             archiveArtifacts artifacts: 'packages/*/playwright-report/**/*', allowEmptyArchive: true
             archiveArtifacts artifacts: 'packages/*/test-results/**/*', allowEmptyArchive: true
 
-            // Generate test summary for Slack
             script {
                 env.TEST_SUMMARY = sh(
                     script: 'node scripts/parse-test-results.js 2>/dev/null || echo "Results parsing unavailable"',
@@ -114,68 +111,71 @@ pipeline {
 
         success {
             echo 'Pipeline completed successfully!'
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'good',
-                message: """
-:white_check_mark: *Test Execution Passed*
-*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
-*Environment:* ${params.ENVIRONMENT}
-*Test Suite:* ${params.TEST_SUITE}
-
-*Results Summary:*
-${env.TEST_SUMMARY}
-
-:link: *Reports:*
-• <${env.BUILD_URL}artifact/reports/dashboard.html|Dashboard Report>
-• <${env.BUILD_URL}artifact/packages/app/reports/html/index.html|Playwright Report>
-• <${env.REPORTPORTAL_URL}|ReportPortal>
-                """
-            )
+            script {
+                sendSlackNotification('PASSED')
+            }
         }
 
         failure {
             echo 'Pipeline failed!'
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'danger',
-                message: """
-:x: *Test Execution Failed*
-*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
-*Environment:* ${params.ENVIRONMENT}
-*Test Suite:* ${params.TEST_SUITE}
-
-*Results Summary:*
-${env.TEST_SUMMARY}
-
-:link: *Reports:*
-• <${env.BUILD_URL}artifact/reports/dashboard.html|Dashboard Report>
-• <${env.BUILD_URL}artifact/packages/app/reports/html/index.html|Playwright Report>
-• <${env.REPORTPORTAL_URL}|ReportPortal>
-• <${env.BUILD_URL}console|Console Output>
-                """
-            )
+            script {
+                sendSlackNotification('FAILED')
+            }
         }
 
         unstable {
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'warning',
-                message: """
-:warning: *Test Execution Unstable*
-*Job:* ${env.JOB_NAME} #${env.BUILD_NUMBER}
-*Environment:* ${params.ENVIRONMENT}
-*Test Suite:* ${params.TEST_SUITE}
-
-*Results Summary:*
-${env.TEST_SUMMARY}
-
-:link: *Reports:*
-• <${env.BUILD_URL}artifact/reports/dashboard.html|Dashboard Report>
-• <${env.BUILD_URL}artifact/packages/app/reports/html/index.html|Playwright Report>
-• <${env.REPORTPORTAL_URL}|ReportPortal>
-                """
-            )
+            script {
+                sendSlackNotification('UNSTABLE')
+            }
         }
+    }
+}
+
+def sendSlackNotification(String status) {
+    def emoji = status == 'PASSED' ? '✅' : (status == 'FAILED' ? '❌' : '⚠️')
+    def color = status == 'PASSED' ? 'good' : (status == 'FAILED' ? 'danger' : 'warning')
+
+    def consoleLink = status == 'FAILED' ? "\n• <${env.BUILD_URL}console|Console Output>" : ''
+
+    def payload = """{
+  "attachments": [
+    {
+      "color": "${color}",
+      "blocks": [
+        {
+          "type": "header",
+          "text": { "type": "plain_text", "text": "${emoji} Test Execution ${status}", "emoji": true }
+        },
+        {
+          "type": "section",
+          "fields": [
+            { "type": "mrkdwn", "text": "*Job:*\\n${env.JOB_NAME} #${env.BUILD_NUMBER}" },
+            { "type": "mrkdwn", "text": "*Environment:*\\n${params.ENVIRONMENT}" },
+            { "type": "mrkdwn", "text": "*Test Suite:*\\n${params.TEST_SUITE}" },
+            { "type": "mrkdwn", "text": "*Status:*\\n${emoji} ${status}" }
+          ]
+        },
+        {
+          "type": "section",
+          "text": { "type": "mrkdwn", "text": "*Results Summary:*\\n${env.TEST_SUMMARY}" }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "*Reports:*\\n• <${env.BUILD_URL}artifact/reports/dashboard.html|Dashboard Report>\\n• <${env.BUILD_URL}artifact/packages/app/reports/html/index.html|Playwright Report>\\n• <${env.REPORTPORTAL_URL}|ReportPortal>${consoleLink}"
+          }
+        }
+      ]
+    }
+  ]
+}"""
+
+    try {
+        withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+            sh "curl -s -X POST \"\${SLACK_WEBHOOK}\" -H 'Content-Type: application/json' -d '${payload}'"
+        }
+    } catch (Exception e) {
+        echo "Slack notification skipped: credential 'slack-webhook' not configured. ${e.message}"
     }
 }
