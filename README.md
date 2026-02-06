@@ -2,6 +2,8 @@
 
 > **Enterprise-grade, multi-modular test automation framework** designed for scalable team collaboration across UI, API, Performance, and Security testing.
 
+## Framework Architecture
+![Architecture Screenshot](docs/unnamed.png)
 ---
 
 ## Test Results Dashboard
